@@ -28,9 +28,9 @@ function App() {
 
       try {
         const res = await axios.get(
-          `${baseUrl}/events.json?classificationName=music&countryCode=US&page=${currentPage}&apikey=${apiKey}`
+          `${baseUrl}/events.json?classificationName=music&sort=date,asc&countryCode=US&apikey=${apiKey}`
         );
-        const events = res?.data?._embedded?.events;;
+        const events = res?.data?._embedded?.events;
         setEvents(events);
         setTotalData(res?.data?.page.totalElements);
       } catch (err) {
@@ -41,7 +41,7 @@ function App() {
     };
 
     getEvents();
-  }, [currentPage]);
+  }, []);
 
   const simpleDateString = (date) => {
     const dateObj = new Date(date);
@@ -57,11 +57,9 @@ function App() {
     const countryCode = country.value;
     setIsLoading(true);
 
-    setCurrentPage(0);
-
     try {
       const res = await axios.get(
-        `${baseUrl}/events.json?classificationName=music&keyword=${keyword}&countryCode=${countryCode}&page=${currentPage}&city=${city}&startDate=${date}&apikey=${apiKey}`
+        `${baseUrl}/events.json?classificationName=music&keyword=${keyword}&sort=date,asc&countryCode=${countryCode}&page=${currentPage}&city=${city}&startDate=${date}&apikey=${apiKey}`
       );
       const events = res?.data?._embedded?.events;
       setEvents(events);
@@ -214,7 +212,10 @@ function App() {
             aria-label="Pagination"
           >
             <button
-              onClick={() => setCurrentPage(currentPage - 1)}
+              onClick={() => {
+                setCurrentPage(currentPage - 1);
+                onSearch();
+              }}
               disabled={currentPage === 0}
               className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
@@ -233,7 +234,10 @@ function App() {
               </svg>
             </button>
             <button
-              onClick={() => setCurrentPage(currentPage + 1)}
+              onClick={() => {
+                setCurrentPage(currentPage + 1);
+                onSearch();
+              }}
               className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
             >
               <span className="sr-only">Next</span>
